@@ -36,10 +36,17 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites', # important include this before migration with allauth
     'django.contrib.staticfiles',
     # signin/signout
     'sign',
     'protect',
+    # required for allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.google',    
 ]
 
 MIDDLEWARE = [
@@ -58,14 +65,14 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # required for allauth
-        # 'DIRS': [],
-        # required for signin/signout
-        'DIRS': [BASE_DIR/'templates'],
+        'DIRS': [],
+        # # required for signin/signout
+        # 'DIRS': [BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request', # requires for allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -73,8 +80,30 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_URL = 'sign/login/'
-LOGIN_REDIRECT_URL = '/'
+# required for allauth
+AUTHENTICATION_BACKENDS = [
+    # ...
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# # required for allauth
+LOGIN_URL = 'accounts/login/'
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# # singin_signaout_module
+# LOGIN_URL = 'sign/login/'
+# LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'simple_signup.wsgi.application'
 
